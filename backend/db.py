@@ -1,4 +1,5 @@
 import json
+import os
 import sqlite3
 from pathlib import Path
 
@@ -6,7 +7,8 @@ from pathlib import Path
 class AnalysisStore:
     def __init__(self, db_path: str | None = None) -> None:
         root = Path(__file__).resolve().parent
-        self.db_path = db_path or str(root / "analysis_history.db")
+        env_db_path = os.getenv("ANALYSIS_DB_PATH")
+        self.db_path = db_path or env_db_path or str(root / "analysis_history.db")
 
     def initialize(self) -> None:
         with sqlite3.connect(self.db_path) as conn:

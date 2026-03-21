@@ -134,14 +134,31 @@ This provides a practical baseline for browser-side verification workflows witho
 
 ### Render
 
-- Build command: `pip install -r requirements.txt`
-- Start command: `uvicorn backend.main:app --host 0.0.0.0 --port $PORT`
+- This repository now includes [`render.yaml`](./render.yaml) for one-click deployment.
+- Render can deploy the backend directly from GitHub using:
+  - Build command: `pip install -r requirements.txt`
+  - Start command: `uvicorn backend.main:app --host 0.0.0.0 --port $PORT`
+  - Health check: `/health`
+- The hosted service should expose:
+  - `/health`
+  - `/analyze`
+  - `/history`
+- The deployment config sets `ANALYSIS_DB_PATH=/tmp/analysis_history.db` by default. This is suitable for demos, but history will be ephemeral unless you attach persistent storage.
 
 ### Railway
 
 - Start command: `uvicorn backend.main:app --host 0.0.0.0 --port $PORT`
 
 The extension manifest already allows common hosted backend patterns including Render and Railway.
+
+## Hosting Strategy
+
+This project has two different hosting/distribution surfaces:
+
+- Backend API: deploy to Render or Railway as a Python web service.
+- Browser extension: load unpacked in Chrome for demos, or publish separately through the Chrome Web Store.
+
+If you want a public project landing page, this repository also includes [`docs/index.html`](./docs/index.html), which can be published with GitHub Pages from the `docs/` folder on the `main` branch.
 
 ## Roadmap
 

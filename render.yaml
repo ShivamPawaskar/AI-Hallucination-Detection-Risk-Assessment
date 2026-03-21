@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: ai-hallucination-risk-detector-api
+    runtime: python
+    plan: free
+    autoDeployTrigger: commit
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: ANALYSIS_DB_PATH
+        value: /tmp/analysis_history.db
