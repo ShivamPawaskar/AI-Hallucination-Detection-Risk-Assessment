@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Trust Monitor</title>
+    <style>
+      :root {
+        --ink-strong: #10233c;
+        --ink-soft: #607892;
+        --paper: rgba(249, 251, 255, 0.92);
+        --paper-edge: rgba(255, 255, 255, 0.72);
+        --accent: #cb6a34;
+        --accent-deep: #90431d;
+        --panel-shadow: rgba(8, 19, 34, 0.34);
+        --body-text: #fff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        width: 380px;
+        min-height: 600px;
+        font-family: Georgia, "Times New Roman", serif;
+        color: var(--body-text);
+        background:
+          radial-gradient(circle at 14% 18%, rgba(255, 188, 132, 0.3) 0%, transparent 28%),
+          radial-gradient(circle at 86% 14%, rgba(126, 178, 230, 0.24) 0%, transparent 28%),
+          linear-gradient(150deg, #10243c 0%, #183b5e 52%, #0c1b2e 100%);
+      }
+
+      body[data-theme="dark"] {
+        --ink-strong: #edf3fb;
+        --ink-soft: #9bb0c7;
+        --paper: rgba(12, 24, 40, 0.92);
+        --paper-edge: rgba(143, 167, 193, 0.16);
+        --panel-shadow: rgba(0, 0, 0, 0.45);
+        --body-text: #edf3fb;
+        background:
+          radial-gradient(circle at 14% 18%, rgba(203, 106, 52, 0.22) 0%, transparent 28%),
+          radial-gradient(circle at 86% 14%, rgba(71, 112, 155, 0.22) 0%, transparent 28%),
+          linear-gradient(150deg, #09121f 0%, #102339 52%, #060d16 100%);
+      }
+
+      .shell {
+        padding: 18px;
+      }
+
+      .panel {
+        position: relative;
+        overflow: hidden;
+        padding: 18px;
+        border-radius: 28px;
+        background: var(--paper);
+        border: 1px solid var(--paper-edge);
+        color: var(--ink-strong);
+        box-shadow:
+          0 24px 56px var(--panel-shadow),
+          inset 0 1px 0 rgba(255, 255, 255, 0.78);
+        backdrop-filter: blur(18px);
+      }
+
+      .panel::before {
+        content: "";
+        position: absolute;
+        top: -78px;
+        right: -44px;
+        width: 190px;
+        height: 190px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(203, 106, 52, 0.16) 0%, transparent 70%);
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 12px;
+        border-radius: 999px;
+        background: rgba(16, 35, 60, 0.06);
+        color: var(--ink-soft);
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .eyebrow::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #51c18a 0%, #1f6e4c 100%);
+        box-shadow: 0 0 0 5px rgba(81, 193, 138, 0.14);
+      }
+
+      h1 {
+        margin: 16px 0 0;
+        font-size: 30px;
+        line-height: 1;
+        letter-spacing: -0.04em;
+      }
+
+      .lead {
+        margin: 10px 0 0;
+        color: var(--ink-soft);
+        font-size: 14px;
+        line-height: 1.58;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: 12px;
+        margin-top: 18px;
+      }
+
+      .hero-card,
+      .metric-card,
+      .section,
+      .history-shell {
+        border-radius: 20px;
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(16, 35, 60, 0.08);
+      }
+
+      .meta-label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 11px;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+        font-weight: 700;
+      }
+
+      .hero-copy,
+      .metric-caption {
+        font-size: 13px;
+        line-height: 1.55;
+        color: #39536f;
+      }
+
+      body[data-theme="dark"] .hero-copy,
+      body[data-theme="dark"] .metric-caption,
+      body[data-theme="dark"] .history-text {
+        color: #bed0e4;
+      }
+
+      .metric-value {
+        font-size: 34px;
+        line-height: 1;
+        letter-spacing: -0.05em;
+        font-weight: 700;
+      }
+
+      .tab-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-top: 16px;
+        padding: 6px;
+        border-radius: 18px;
+        background: rgba(16, 35, 60, 0.06);
+      }
+
+      .tab-btn {
+        border: 0;
+        border-radius: 14px;
+        padding: 11px 12px;
+        background: transparent;
+        color: var(--ink-soft);
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: none;
+      }
+
+      .tab-btn.active {
+        background: rgba(255, 255, 255, 0.92);
+        color: var(--ink-strong);
+        box-shadow: 0 10px 20px rgba(16, 35, 60, 0.08);
+      }
+
+      .tab-panel {
+        display: none;
+      }
+
+      .tab-panel.active {
+        display: block;
+      }
+
+      .section {
+        margin-top: 16px;
+      }
+
+      .switch-row,
+      .section-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .switch-copy strong {
+        display: block;
+        font-size: 16px;
+      }
+
+      .switch-copy p,
+      .section-note {
+        margin: 6px 0 0;
+        color: var(--ink-soft);
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .switch {
+        position: relative;
+        width: 58px;
+        height: 34px;
+        flex: 0 0 auto;
+      }
+
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .slider {
+        position: absolute;
+        inset: 0;
+        border-radius: 999px;
+        background: rgba(16, 35, 60, 0.12);
+        transition: 0.24s ease;
+      }
+
+      .slider::before {
+        content: "";
+        position: absolute;
+        top: 4px;
+        left: 4px;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: linear-gradient(180deg, #ffffff 0%, #f4f7fa 100%);
+        box-shadow: 0 6px 12px rgba(16, 35, 60, 0.18);
+        transition: 0.24s ease;
+      }
+
+      input:checked + .slider {
+        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
+        box-shadow: 0 12px 24px rgba(203, 106, 52, 0.22);
+      }
+
+      input:checked + .slider::before {
+        transform: translateX(24px);
+      }
+
+      .row {
+        margin-top: 16px;
+      }
+
+      .field-label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+        font-weight: 700;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        padding: 13px 14px;
+        border-radius: 14px;
+        border: 1px solid rgba(16, 35, 60, 0.12);
+        background: rgba(255, 255, 255, 0.9);
+        font-size: 13px;
+        color: var(--ink-strong);
+        outline: none;
+      }
+
+      .button-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      button {
+        border: 0;
+        border-radius: 15px;
+        padding: 12px 14px;
+        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
+        color: #fff;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 16px 28px rgba(144, 67, 29, 0.24);
+      }
+
+      .secondary-btn {
+        background: rgba(16, 35, 60, 0.08);
+        color: var(--ink-strong);
+        box-shadow: none;
+      }
+
+      .status {
+        min-height: 18px;
+        margin-top: 12px;
+        font-size: 12px;
+        color: var(--ink-soft);
+      }
+
+      .history-shell {
+        margin-top: 16px;
+        padding: 0;
+        overflow: hidden;
+      }
+
+      .history-head {
+        padding: 15px 15px 10px;
+        border-bottom: 1px solid rgba(16, 35, 60, 0.08);
+      }
+
+      .history-list {
+        max-height: 230px;
+        overflow: auto;
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .history-item {
+        border-radius: 16px;
+        padding: 12px;
+        background: rgba(246, 249, 252, 0.95);
+        border: 1px solid rgba(16, 35, 60, 0.07);
+      }
+
+      .history-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .history-source {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: capitalize;
+      }
+
+      .risk-badge {
+        padding: 5px 9px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .history-score {
+        margin-top: 8px;
+        font-size: 12px;
+        color: var(--ink-soft);
+      }
+
+      .history-text {
+        margin-top: 8px;
+        font-size: 12px;
+        line-height: 1.5;
+        color: #35506c;
+      }
+
+      .history-empty {
+        padding: 16px;
+        font-size: 12px;
+        color: var(--ink-soft);
+      }
+
+      body[data-theme="dark"] .hero-card,
+      body[data-theme="dark"] .metric-card,
+      body[data-theme="dark"] .section,
+      body[data-theme="dark"] .history-shell {
+        background: rgba(16, 30, 48, 0.8);
+        border-color: rgba(143, 167, 193, 0.14);
+      }
+
+      body[data-theme="dark"] .tab-row,
+      body[data-theme="dark"] .eyebrow,
+      body[data-theme="dark"] .secondary-btn,
+      body[data-theme="dark"] .slider {
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      body[data-theme="dark"] .tab-btn.active {
+        background: rgba(255, 255, 255, 0.12);
+        color: #edf3fb;
+      }
+
+      body[data-theme="dark"] input[type="text"] {
+        background: rgba(10, 20, 33, 0.9);
+        border-color: rgba(143, 167, 193, 0.16);
+        color: #edf3fb;
+      }
+
+      body[data-theme="dark"] .history-item {
+        background: rgba(10, 20, 33, 0.82);
+        border-color: rgba(143, 167, 193, 0.12);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <div class="panel">
+        <div class="eyebrow">Realtime Risk Analysis</div>
+        <h1>AI Trust Monitor</h1>
+        <p class="lead">Control live verification, keep the overlay tidy, and review past records from recent analyses.</p>
+
+        <div class="hero">
+          <div class="hero-card">
+            <span class="meta-label">Purpose</span>
+            <div class="hero-copy">Watch AI responses, compare risky claims, and keep an audit trail of recent trust decisions.</div>
+          </div>
+          <div class="metric-card">
+            <span class="meta-label">Records</span>
+            <div id="historyCount" class="metric-value">0</div>
+            <div class="metric-caption">Recent analyses loaded from your backend history.</div>
+          </div>
+        </div>
+
+        <div class="tab-row">
+          <button id="liveTabBtn" class="tab-btn active" type="button">New Search</button>
+          <button id="historyTabBtn" class="tab-btn" type="button">Past Search</button>
+        </div>
+
+        <div id="livePanel" class="tab-panel active">
+          <div class="section">
+            <div class="switch-row">
+              <div class="switch-copy">
+                <strong>Extension State</strong>
+                <p>Enable or disable live page analysis without changing your backend settings.</p>
+              </div>
+              <label class="switch" aria-label="Toggle extension">
+                <input id="enabledToggle" type="checkbox" />
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="row">
+              <label class="field-label" for="backendUrl">Backend Analyze URL</label>
+              <input id="backendUrl" type="text" placeholder="http://127.0.0.1:8000/analyze" />
+            </div>
+
+            <div class="row">
+              <div class="switch-row">
+                <div class="switch-copy">
+                  <strong>Dark Theme</strong>
+                  <p>Switch the popup and page overlay between light and dark styles.</p>
+                </div>
+                <label class="switch" aria-label="Toggle dark theme">
+                  <input id="themeToggle" type="checkbox" />
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="button-row">
+              <button id="saveBtn" type="button">Save Settings</button>
+              <button id="refreshHistoryBtn" class="secondary-btn" type="button">Refresh</button>
+            </div>
+            <div id="status" class="status"></div>
+          </div>
+        </div>
+
+        <div id="historyPanel" class="tab-panel">
+          <div class="history-shell">
+            <div class="history-head">
+              <div class="section-head">
+                <div>
+                  <span class="meta-label">Past Records</span>
+                  <div class="section-note">Recent backend analyses from SQLite history.</div>
+                </div>
+              </div>
+            </div>
+            <div id="historyList" class="history-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
