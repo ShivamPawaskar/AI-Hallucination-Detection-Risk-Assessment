@@ -111,6 +111,12 @@
       border-color: rgba(13, 107, 92, 0.28);
     }
 
+    .button.ghost {
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.52);
+      border-color: rgba(31, 42, 36, 0.1);
+    }
+
     .grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -125,6 +131,13 @@
     .panel h2 {
       margin: 0 0 10px;
       font-size: 1.2rem;
+    }
+
+    .downloads {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 18px;
     }
 
     .panel p,
@@ -161,6 +174,10 @@
       .grid {
         grid-template-columns: 1fr;
       }
+
+      .downloads {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -175,8 +192,9 @@
         claims, and keep lightweight analysis history.
       </p>
       <div class="actions">
-        <a class="button" href="https://github.com/ShivamPawaskar/detection-and-risk-assessment-of-hallucinations-in-generative-ai-systems">View Repository</a>
-        <a class="button secondary" href="https://github.com/ShivamPawaskar/detection-and-risk-assessment-of-hallucinations-in-generative-ai-systems/blob/main/README.md">Read Documentation</a>
+        <a class="button" href="https://github.com/ShivamPawaskar/AI-Hallucination-Detection-Risk-Assessment">View Repository</a>
+        <a class="button secondary" href="https://github.com/ShivamPawaskar/AI-Hallucination-Detection-Risk-Assessment/blob/main/README.md">Read Documentation</a>
+        <a class="button ghost" href="https://github.com/ShivamPawaskar/AI-Hallucination-Detection-Risk-Assessment/archive/refs/heads/main.zip">Download ZIP</a>
       </div>
     </section>
 
@@ -208,9 +226,33 @@
       </article>
     </section>
 
+    <section class="downloads">
+      <article class="panel">
+        <h2>Download Source</h2>
+        <p>Grab the complete repository as a ZIP archive for local setup, demo packaging, or review.</p>
+        <div class="actions">
+          <a class="button" href="https://github.com/ShivamPawaskar/AI-Hallucination-Detection-Risk-Assessment/archive/refs/heads/main.zip">Full Project ZIP</a>
+        </div>
+      </article>
+      <article class="panel">
+        <h2>Browse Extension</h2>
+        <p>Open the browser-extension code directly if you only want the Chrome-side implementation.</p>
+        <div class="actions">
+          <a class="button secondary" href="https://github.com/ShivamPawaskar/AI-Hallucination-Detection-Risk-Assessment/tree/main/extension">Open Extension Folder</a>
+        </div>
+      </article>
+      <article class="panel">
+        <h2>Browse Backend</h2>
+        <p>Inspect the FastAPI service, analyzer logic, verification layer, and storage code.</p>
+        <div class="actions">
+          <a class="button secondary" href="https://github.com/ShivamPawaskar/AI-Hallucination-Detection-Risk-Assessment/tree/main/backend">Open Backend Folder</a>
+        </div>
+      </article>
+    </section>
+
     <p class="footer">
-      Host the backend on Render and publish this <code>docs/</code> folder with GitHub Pages for a
-      simple project landing page.
+      Download the code directly from this page, then host the backend on Render and use the
+      extension locally or publish it separately.
     </p>
   </main>
 </body>
