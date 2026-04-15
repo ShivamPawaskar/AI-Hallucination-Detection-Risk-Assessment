@@ -1,4 +1,4 @@
-# Detection and Risk Assessment of Hallucinations in Generative AI Systems 7567655878
+# Detection and Risk Assessment of Hallucinations in Generative AI Systems 75676558
 <p align="center">
   <strong>A browser-assisted trust layer for AI-generated responses.</strong><br/>
   Chrome extension + FastAPI backend for live hallucination-risk scoring, flagged-claim surfacing, and lightweight verification context.
